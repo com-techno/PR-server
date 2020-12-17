@@ -6,6 +6,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import database.MyDatabase;
 import database.SQLDatabase;
+import objects.forms.Token;
 import util.HashUtils;
 
 import java.io.File;
@@ -82,18 +83,28 @@ public class APIHandler implements HttpHandler {
                             case "sign_in":
                                 signIn(exchange, gson, database, json);
                                 break;
-                            case "new_song":
+                            case "new_painting":
                                 checkToken(headers);
                                 addPainting(exchange, gson, database, json);
                                 break;
-                            case "get_song":
+                            case "get_painting":
                                 checkToken(headers);
-                                getArticle(exchange, gson, database);
+                                getPainting(exchange, gson, database);
                                 break;
-                            case "delete_song":
+                            case "get_moderated_paintings":
+                                getModeratedPaintings(exchange, gson, database);
+                            case "get_not_moderated_paintings":
+
+                            case "delete_painting":
                                 checkToken(headers);
-                                deleteSong(exchange, gson, database, json);
+                                deletePainting(exchange, gson, database, json);
                                 break;
+
+                            case "search":
+                                checkToken(headers);
+                                search(exchange, gson, database);
+                                break;
+
 
                             /*
                             case "like":
@@ -105,11 +116,6 @@ public class APIHandler implements HttpHandler {
                                 top(exchange, gson, database);
                                 break;
                             */
-
-                            case "search":
-                                checkToken(headers);
-                                search(exchange, gson, database);
-                                break;
                         }
                 default:
                     exchange.sendResponseHeaders(404, 0);
@@ -126,6 +132,11 @@ public class APIHandler implements HttpHandler {
         if (token == null) throw new Exception("Token expected");
         if (!HashUtils.checkToken(token)) throw new Exception("Invalid token");
     }
+
+    private void checkRoot(Headers headers){
+
+    }
+
 }
 
 

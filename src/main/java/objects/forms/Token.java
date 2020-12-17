@@ -1,10 +1,36 @@
 package objects.forms;
 
+import java.net.URLDecoder;
+
 public class Token {
 
-    public String token;
+    private String username;
+    private String expires;
+    private String hash;
 
-    public Token(String token) {
-        this.token = token;
+
+    public Token(String username, String expires, String hash) {
+        this.username = username;
+        this.expires = expires;
+        this.hash = hash;
+    }
+
+    public Token(String token){
+        String[] data = URLDecoder.decode(token).split("@");
+        username = data[0];
+        expires = data[1];
+        hash = data[2];
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getExpires() {
+        return expires;
+    }
+
+    public String getHash() {
+        return hash;
     }
 }

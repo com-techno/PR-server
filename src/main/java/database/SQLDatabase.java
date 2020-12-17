@@ -5,12 +5,15 @@ import objects.TimeStamp;
 import objects.User;
 import objects.forms.DeletePaintingForm;
 import objects.forms.NewUserForm;
+import objects.forms.Token;
 import util.DatabaseUtils;
 import util.HashUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,9 +29,9 @@ public class SQLDatabase implements MyDatabase {
 
     @Override
     public void signUp(NewUserForm newUser) throws Exception {
-            String query = "SELECT * FROM user WHERE login='" + newUser.getLogin() + "'";
-            System.out.println(query);
-            try {
+        String query = "SELECT * FROM user WHERE login='" + newUser.getLogin() + "'";
+        System.out.println(query);
+        try {
             ResultSet resSet = db.execSqlQuery(query);
             if (resSet.isClosed()) {
                 query = "INSERT INTO user (login, passhash" + (newUser.getEmail() == null ? "" : ", email") + ") " +
@@ -58,7 +61,7 @@ public class SQLDatabase implements MyDatabase {
             if (pass.equals(passhash))
                 return HashUtils.getToken(user);
             else throw new Exception("Password is incorrect");
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             throw new Exception("SQLException");
         }
@@ -100,6 +103,31 @@ public class SQLDatabase implements MyDatabase {
             e.printStackTrace();
             throw new Exception("SQLException");
         }
+    }
+
+    @Override
+    public List<Painting> getModeratedPaintings() throws Exception {
+        List<Painting> paintings = new ArrayList<>();
+        String query = "SELECT * FROM painting WHERE moderated<>NULL;";
+        System.out.println(query);
+        try {
+            ResultSet rs = db.execSqlQuery(query);
+            if (rs.isClosed())
+                throw new Exception("There is no moderated paintings");
+            do {
+               paintings.add(new Painting(rs.getString("name"),
+                       rs.getString("date"),
+                       new TimeStamp(rs.getString("published")),
+                       new TimeStamp(rs.getString("edited")),
+                       new TimeStamp(rs.getString("moderated")),
+                       rs.getString("src"),
+                       rs.getInt("id")));
+            } while (!rs.isClosed());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("SQLException");
+        }
+        return paintings;
     }
 
     /**
@@ -178,10 +206,31 @@ public class SQLDatabase implements MyDatabase {
     @Override
     public void deletePainting(DeletePaintingForm deletePainting) throws Exception {
         try {
-            db.execSqlUpdate("DELETE FROM painting WHERE id=" + deletePainting.getPaintingId());
-        } catch (SQLException e){
+            String query = "DELETE FROM painting WHERE id=" + deletePainting.getPaintingId();
+            System.out.println(query);
+            db.execSqlUpdate(query);
+        } catch (SQLException e) {
             e.printStackTrace();
             throw new Exception("SQLException");
         }
+    }
+
+    @Override
+    public void moderatePainting(DeletePaintingForm moderatePainting) throws Exception {
+        try {
+            String query = "UPDATE painting SET moderated=\'"
+                    + new TimeStamp(Calendar.getInstance()).toString()
+                    + "\' WHERE id=" + moderatePainting.getPaintingId();
+            System.out.println(query);
+            db.execSqlUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("SQLException");
+        }
+    }
+
+    @Override
+    public void getUserRole(Token token) throws Exception{
+
     }
 }
