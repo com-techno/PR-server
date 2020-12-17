@@ -18,6 +18,8 @@ public class UserUtils {
     }
 
     public static void signIn(HttpExchange exchange, Gson gson, MyDatabase database, String json) throws Exception {
-        writeJson(exchange, "token", database.signIn(gson.fromJson(json, User.class)));
+        String token = database.signIn(gson.fromJson(json, User.class));
+        exchange.setAttribute("Set-Cookie", "token=" + token);
+        writeJson(exchange, "token", token);
     }
 }

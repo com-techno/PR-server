@@ -11,6 +11,7 @@ import util.HashUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpCookie;
 import java.sql.SQLException;
 
 import static util.DecodeUtils.writeFile;
@@ -128,7 +129,7 @@ public class APIHandler implements HttpHandler {
     }
 
     private void checkToken(Headers headers) throws Exception {
-        String token = headers.getFirst("Token");
+        String token = headers.getFirst("Cookie");
         if (token == null) throw new Exception("Token expected");
         if (!HashUtils.checkToken(token)) throw new Exception("Invalid token");
     }
