@@ -1,11 +1,10 @@
 package database;
 
+import objects.Author;
 import objects.Painting;
 import objects.TimeStamp;
 import objects.User;
-import objects.forms.DeletePaintingForm;
-import objects.forms.NewUserForm;
-import objects.forms.Token;
+import objects.forms.*;
 import util.DatabaseUtils;
 import util.HashUtils;
 
@@ -70,12 +69,45 @@ public class SQLDatabase implements MyDatabase {
     @Override
     public void addPainting(Painting newPainting) throws Exception {
         try {
-            String query = "INSERT INTO painting (name, date, published, src) " +
+            String query = "INSERT INTO painting (name, date, published, src, description) " +
                     "VALUES (" +
                     "\"" + newPainting.getName() + "\", " +
                     "\"" + newPainting.getDate() + "\", " +
                     "\"" + newPainting.getPublished().toString() + "\", " +
-                    "\"" + newPainting.getSrc() + "\");";
+                    "\"" + newPainting.getSrc() + "\", " +
+                    "\"" + newPainting.getDescription() + "\");";
+            System.out.println(query);
+            db.execSqlUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("SQLException");
+        }
+    }
+
+    @Override
+    public void moderatePainting(ModeratePaintingForm moderatePainting) throws Exception {
+        try {
+            String query = "UPDATE painting SET moderated=\'"
+                    + new TimeStamp(Calendar.getInstance()).toString()
+                    + "\' WHERE id=" + moderatePainting.getId();
+            System.out.println(query);
+            db.execSqlUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("SQLException");
+        }
+    }
+
+    @Override
+    public void editPainting(EditPaintingForm editPainting) throws Exception {
+        try {
+            String query = "UPDATE painting SET" +
+                    "name = \'" + editPainting.getName() + "\', " +
+                    "description = \'" + editPainting.getDescription() + "\', " +
+                    "date = \'" + editPainting.getDate() + "\', " +
+                    "published = \'" + editPainting.getPublished().toString() + "\', " +
+                    "src = \'" + editPainting.getSrc() + "\' " +
+                    "WHERE id = " + editPainting.getId() + ";";
             System.out.println(query);
             db.execSqlUpdate(query);
         } catch (SQLException e) {
@@ -92,13 +124,7 @@ public class SQLDatabase implements MyDatabase {
             ResultSet rs = db.execSqlQuery(query);
             if (rs.isClosed())
                 throw new Exception("Painting with same id doesn't exists");
-            return new Painting(rs.getString("name"),
-                    rs.getString("date"),
-                    new TimeStamp(rs.getString("published")),
-                    new TimeStamp(rs.getString("edited")),
-                    new TimeStamp(rs.getString("moderated")),
-                    rs.getString("src"),
-                    rs.getInt("id"));
+            return new Painting(rs);
         } catch (SQLException e) {
             e.printStackTrace();
             throw new Exception("SQLException");
@@ -115,13 +141,26 @@ public class SQLDatabase implements MyDatabase {
             if (rs.isClosed())
                 throw new Exception("There is no moderated paintings");
             do {
-               paintings.add(new Painting(rs.getString("name"),
-                       rs.getString("date"),
-                       new TimeStamp(rs.getString("published")),
-                       new TimeStamp(rs.getString("edited")),
-                       new TimeStamp(rs.getString("moderated")),
-                       rs.getString("src"),
-                       rs.getInt("id")));
+                paintings.add(new Painting(rs));
+            } while (!rs.isClosed());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("SQLException");
+        }
+        return paintings;
+    }
+
+    @Override
+    public List<Painting> getNotModeratedPaintings() throws Exception {
+        List<Painting> paintings = new ArrayList<>();
+        String query = "SELECT * FROM painting WHERE moderated==NULL;";
+        System.out.println(query);
+        try {
+            ResultSet rs = db.execSqlQuery(query);
+            if (rs.isClosed())
+                throw new Exception("There is no pre moderated paintings");
+            do {
+                paintings.add(new Painting(rs));
             } while (!rs.isClosed());
         } catch (SQLException e) {
             e.printStackTrace();
@@ -131,7 +170,7 @@ public class SQLDatabase implements MyDatabase {
     }
 
     /**
-     * Rating system //todo доделать систему рейтинга в БД
+     * Rating system //todo доделать систему рейтинга в БД а впрочем нафиг надо а?
      *
      * @Override public List<Painting> getTop(int count) throws Exception {
      * List<Painting> top = new LinkedList<>();
@@ -144,6 +183,7 @@ public class SQLDatabase implements MyDatabase {
      * }
      * return top;
      * }
+     *
      * @Override public void like(LikeForm like) throws Exception {
      * String query = "UPDATE song SET ";
      * switch (like.getLike()) {
@@ -183,14 +223,7 @@ public class SQLDatabase implements MyDatabase {
                         .replace(".", "")
                         .replace(":", "");
                 if (author.contains(query)) {
-                    Painting painting = new Painting(rs.getString("name"),
-                            rs.getString("date"),
-                            new TimeStamp(rs.getString("published")),
-                            new TimeStamp(rs.getString("edited")),
-                            new TimeStamp(rs.getString("moderated")),
-                            rs.getString("src"),
-                            rs.getInt("id"));
-                    paintings.add(painting);
+                    paintings.add(new Painting(rs));
                     rs.next();
                 }
 
@@ -215,12 +248,17 @@ public class SQLDatabase implements MyDatabase {
         }
     }
 
+
     @Override
-    public void moderatePainting(DeletePaintingForm moderatePainting) throws Exception {
+    public void addAuthor(Author newAuthor) throws Exception {
         try {
-            String query = "UPDATE painting SET moderated=\'"
-                    + new TimeStamp(Calendar.getInstance()).toString()
-                    + "\' WHERE id=" + moderatePainting.getPaintingId();
+            String query = "INSERT INTO painting (name, date, published, src, description) " +
+                    "VALUES (" +
+                    "\"" + newAuthor.getName() + "\", " +
+                    "\"" + newAuthor.getDate() + "\", " +
+                    "\"" + newAuthor.getPublished().toString() + "\", " +
+                    "\"" + newAuthor.getSrc() + "\", " +
+                    "\"" + newAuthor.getDescription() + "\");";
             System.out.println(query);
             db.execSqlUpdate(query);
         } catch (SQLException e) {
@@ -230,7 +268,49 @@ public class SQLDatabase implements MyDatabase {
     }
 
     @Override
-    public void getUserRole(Token token) throws Exception{
+    public void moderatePainting(ModeratePaintingForm moderatePainting) throws Exception {
+        try {
+            String query = "UPDATE painting SET moderated=\'"
+                    + new TimeStamp(Calendar.getInstance()).toString()
+                    + "\' WHERE id=" + moderatePainting.getId();
+            System.out.println(query);
+            db.execSqlUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("SQLException");
+        }
+    }
 
+    @Override
+    public void editPainting(EditPaintingForm editPainting) throws Exception {
+        try {
+            String query = "UPDATE painting SET" +
+                    "name = \'" + editPainting.getName() + "\', " +
+                    "description = \'" + editPainting.getDescription() + "\', " +
+                    "date = \'" + editPainting.getDate() + "\', " +
+                    "published = \'" + editPainting.getPublished().toString() + "\', " +
+                    "src = \'" + editPainting.getSrc() + "\' " +
+                    "WHERE id = " + editPainting.getId() + ";";
+            System.out.println(query);
+            db.execSqlUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("SQLException");
+        }
+    }
+
+    @Override
+    public Painting getPainting(int id) throws Exception {
+        String query = "SELECT * FROM painting WHERE id=" + id + ";";
+        System.out.println(query);
+        try {
+            ResultSet rs = db.execSqlQuery(query);
+            if (rs.isClosed())
+                throw new Exception("Painting with same id doesn't exists");
+            return new Painting(rs);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("SQLException");
+        }
     }
 }

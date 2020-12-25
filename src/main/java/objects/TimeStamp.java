@@ -12,15 +12,8 @@ public class TimeStamp {
     private int hour;
     private int minute;
     private int second;
-    private int timeZone;
 
     public TimeStamp(String parseFrom) {
-        String zone = parseFrom.substring(parseFrom.length() - 6);
-        boolean sign = zone.charAt(0) == '+';
-        parseFrom = parseFrom.substring(0, parseFrom.length() - 6);
-        String[] zoneArr = zone.substring(1).split(":");
-        this.timeZone = (Integer.parseInt(zoneArr[0]) * 60 + Integer
-                .parseInt(zoneArr[1])) * (sign ? 1 : -1);
         parseFrom = parseFrom.replace(":", "-").replace("T", "-");
         String[] timeFields = parseFrom.split("-");
         this.year = Integer.parseInt(timeFields[0]);
@@ -38,7 +31,6 @@ public class TimeStamp {
         this.hour = calendar.get(Calendar.HOUR_OF_DAY);
         this.minute = calendar.get(Calendar.MINUTE);
         this.second = calendar.get(Calendar.SECOND);
-        this.timeZone = 0;
     }
 
     private static String getConstLength(int length, String target) {
@@ -61,14 +53,14 @@ public class TimeStamp {
                 + getConstLength(2, String.valueOf(hour))
                 + ":" + getConstLength(2, String.valueOf(minute))
                 + ":" + getConstLength(2, String.valueOf(second))
-                + timezoneToString();
+                /*+ timezoneToString()*/;
     }
 
-    private String timezoneToString() {
+    /*private String timezoneToString() {
         if (timeZone == 0) return "";
         return (timeZone > 0 ? "+" : "-")
                 + getConstLength(2, String.valueOf(Math.abs(timeZone) / 60))
                 + ":" + getConstLength(2, String
                 .valueOf(timeZone % 60));
-    }
+    }*/
 }

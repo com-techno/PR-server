@@ -6,14 +6,14 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import database.MyDatabase;
 import database.SQLDatabase;
-import objects.forms.Token;
 import util.HashUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.HttpCookie;
 import java.sql.SQLException;
 
+import static util.AdminUtils.*;
+import static util.AuthorUtils.*;
 import static util.DecodeUtils.writeFile;
 import static util.DecodeUtils.writeJson;
 import static util.PaintingUtils.*;
@@ -92,13 +92,44 @@ public class APIHandler implements HttpHandler {
                                 checkToken(headers);
                                 getPainting(exchange, gson, database);
                                 break;
+                            case "moderate_painting":
+                                checkToken(headers);
+                                checkRoot(headers);
+                                moderatePainting(exchange, gson, database, json);
+                                break;
+                            case "edit_painting":
+                                checkToken(headers);
+                                checkRoot(headers);
+                                editPainting(exchange, gson, database, json);
+                                break;
                             case "get_moderated_paintings":
                                 getModeratedPaintings(exchange, gson, database);
+                                break;
                             case "get_not_moderated_paintings":
-
+                                checkToken(headers);
+                                checkRoot(headers);
+                                getNotModeratedPaintings(exchange, gson, database);
+                                break;
                             case "delete_painting":
                                 checkToken(headers);
                                 deletePainting(exchange, gson, database, json);
+                                break;
+                            case "new_author":
+                                checkToken(headers);
+                                addAuthor(exchange, gson, database, json);
+                                break;
+                            case "get_author":
+                                checkToken(headers);
+                                getAuthor(exchange, gson, database);
+                                break;
+                            case "edit_author":
+                                checkToken(headers);
+                                checkRoot(headers);
+                                editAuthor(exchange, gson, database, json);
+                                break;
+                            case "delete_author":
+                                checkToken(headers);
+                                deleteAuthor(exchange, gson, database, json);
                                 break;
 
                             case "search":
@@ -129,12 +160,14 @@ public class APIHandler implements HttpHandler {
     }
 
     private void checkToken(Headers headers) throws Exception {
-        String token = headers.getFirst("Cookie");
+        String token = headers.getFirst("Token");
         if (token == null) throw new Exception("Token expected");
         if (!HashUtils.checkToken(token)) throw new Exception("Invalid token");
     }
 
-    private void checkRoot(Headers headers){
+    private void checkRoot(Headers headers) throws Exception {
+        String token = headers.getFirst("Token");
+        if (HashUtils.getRoleFromToken(token) == 0) throw new Exception("You haven't root role");;
 
     }
 

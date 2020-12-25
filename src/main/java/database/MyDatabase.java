@@ -12,6 +12,10 @@ public interface MyDatabase {
 
     void addPainting(Painting newPainting) throws Exception;
 
+    void moderatePainting(ModeratePaintingForm moderatePainting) throws Exception;
+
+    void editPainting(EditPaintingForm editPainting) throws Exception;
+
     Painting getPainting(int id) throws Exception;
 
     List<Painting> getModeratedPaintings() throws Exception;
@@ -20,11 +24,11 @@ public interface MyDatabase {
 
     //void like(LikeForm like) throws Exception;
 
+    List<Painting> getNotModeratedPaintings() throws Exception;
+
     List<Painting> search(String query) throws Exception;
 
     void deletePainting(DeletePaintingForm deleteSong) throws Exception;
-
-    void moderatePainting(DeletePaintingForm moderatePainting) throws Exception;
 
     void getUserRole(Token token) throws Exception;
 }

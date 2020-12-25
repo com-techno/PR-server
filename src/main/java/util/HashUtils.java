@@ -13,7 +13,7 @@ public class HashUtils {
 
     public static String getToken(User user) throws Exception {
         long expires = new Date().getTime() + validTime;
-        return user.login + "@" + expires + "@" + genHash(user.login, expires);
+        return user.login + "@" + user.role + expires + "@" + genHash(user.login, expires, user.role);
     }
 
     public static String getURLEncodedToken(User user) throws Exception {
@@ -22,13 +22,16 @@ public class HashUtils {
 
     public static boolean checkToken(String token) {
         String[] data = URLDecoder.decode(token).split("@");
-        long expires = Long.parseLong(data[1]);
+        String data1 = data[1];
+        int role = Integer.parseInt(String.valueOf(data1.charAt(0)));
+        data1 = data1.substring(1);
+        long expires = Long.parseLong(data1);
         long now = new Date().getTime();
         if (expires < now) return false;
         data[2] = URLDecoder.decode(data[2]);
         data[2] = data[2].replace(" ", "+");
         try {
-            String trueHash = URLDecoder.decode(genHash(data[0], expires));
+            String trueHash = URLDecoder.decode(genHash(data[0], expires, role));
             if (data[2].equals(trueHash)) return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -36,13 +39,19 @@ public class HashUtils {
         return false;
     }
 
-    public static String getLoginFromToken(String token){
+    public static int getRoleFromToken(String token) {
         String[] data = URLDecoder.decode(token).split("@");
-        return data[1];
+        String data1 = data[1];
+        return Integer.parseInt(String.valueOf(data1.charAt(0)));
     }
 
-    private static String genHash(String username, long expires) throws Exception {
-        return URLEncoder.encode(new String(encode(username + expires + "techno salt")));
+    public static String getLoginFromToken(String token) {
+        String[] data = URLDecoder.decode(token).split("@");
+        return data[0];
+    }
+
+    private static String genHash(String username, long expires, int role) throws Exception {
+        return URLEncoder.encode(new String(encode(username + role + expires + "techno salt")));
     }
 
     public static byte[] encode(String target) throws Exception {

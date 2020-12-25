@@ -31,6 +31,10 @@ public class PaintingUtils {
         writeJson(exchange, gson.toJson(database.getModeratedPaintings()));
     }
 
+    public static void getNotModeratedPaintings(HttpExchange exchange, Gson gson, MyDatabase database) throws Exception {
+        writeJson(exchange, gson.toJson(database.getNotModeratedPaintings()));
+    }
+
     public static void deletePainting(HttpExchange exchange, Gson gson, MyDatabase database, String json) throws Exception {
         DeletePaintingForm deletePainting = gson.fromJson(json, DeletePaintingForm.class);
         database.deletePainting(deletePainting);

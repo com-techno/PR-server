@@ -6,7 +6,7 @@ public class User {
     public String login;
     public String passHash;
     public String email;
-    public int admin;
+    public int role;
 
     public User(String username, String passHash, String email) throws Exception {
         if (username == null || passHash == null) throw new Exception("Form is incomplete");

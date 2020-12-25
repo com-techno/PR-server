@@ -7,45 +7,60 @@
     <meta name="author" content="Techno's studio">
     <meta name="description" content="Site about paintings - Index page">
     <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/index.css">
     <link rel="icon" type="image/x-icon" href="/static/x-icon.png" />
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function() {
+    <!--<script type="text/javascript" src="expatterns.min.js"></script>-->
+    <script type="text/javascript" src="/static/js/index.js"></script>
+    <script type="text/javascript" src="../js/index.js"></script>
 
-
-
-        }
-    </script>
 </head>
 
 <body>
     <header class="header">
         <a href="/" class="header__logo">Paintings</a>
         <div class="header__nav">
-            <a href="" class="header__link">О нас</a>
-            <a href="" class="header__link">Контакты</a>
-            <button id="si-btn" class="header__link">Войти</button>
-            <button id="su-btn" class="header__link">Зарегистрироваться</button>
+            <span id="nav__message">Авторизован, как {{username}}</span>
+            <!--<a href="" class="header__link">О&nbsp;нас</a>
+            <a href="" class="header__link">Контакты</a>-->
+            <button id="nav__login" class="header__link">Войти</button>
+            <button id="nav__register" class="header__link">Зарегистрироваться</button>
+
         </div>
     </header>
     <main>
-        <div class="paintings__feed">
-            <div class="preview">
-                <div class="preview__image">
-                    <img src="https://img.youtube.com/vi/lFfwIQ6TrRo/maxresdefault.jpg" height="150">
-                </div>
-                <div class="preview__desc">
-                    <div class="preview__picdescblock">
-                        <div class="preview__picname">Последний день Помпеи</div>
-                        <div class="preview__picdesc">Ok</div>
-                    </div>
-                    <a href="" class="preview__link">Подробнее</a>
+        <form action="javascript:function login(){return false;}">
+            <div id="login" class="float">
+                <div class="float__header">Войти</div>
+                <div id="login_message" class="float__message">Какое-то сообщение</div>
+                <div id="login__warn" class="float__warn">Какое-то предупреждение</div>
+                <div class="float__form">
+
+                        <input type="text" id="login__un" class="float__input" name="login__un" placeholder="Username">
+                        <input type="password" id="login__pw" class="float__input" name="login__pw" placeholder="Password">
+                        <input type="submit" id="login__submit" class="float__input" value="Войти">
+
                 </div>
             </div>
+        </form>
+        <form  action="javascript:function login(){return false;}">
+            <div id="register" class="float">
+                <div class="float__header">Регистрация</div>
+                <div id="register__message" class="float__message">Какое-то сообщение</div>
+                <div class="float__warn">Какое-то предупреждение</div>
+                <div id="register__warn" class="float__form">
+                    <input type="text" id="register__un" required class="float__input" name="register__un" placeholder="Username">
+                    <input type="email" id="register__email" required class="float__input" name="register__email" placeholder="E-mail">
+                    <input type="password" id="register__pw" required class="float__input" name="register__pw" placeholder="Password">
+                <button id="register__submit" class="float__input">Зарегистрироваться</button>
+            </div>
+        </div>
+        </form>
 
-
+        <div class="paintings__feed">
+           {{paintings__feed}}
         </div>
     </main>
     <footer></footer>
