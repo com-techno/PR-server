@@ -31,6 +31,9 @@ $(document).ready(
         $("#register__submit").click(function () {
             requestRegister();
         });
+        $("#nav__print").click(function () {
+            callPrint("paintings__feed");
+        });
 
 
 
@@ -38,7 +41,20 @@ $(document).ready(
 
     });
 
-
+function callPrint(strid) {
+    var prtContent = document.getElementById(strid).innerHTML;
+    var prtCSS = '<style>.paintings__feed{max-width:800px;margin:0 auto}.preview{margin:10px;min-width:560px;height:auto;display:flex;justify-content:space-between;padding:10px;border-style:solid;border-radius:10px;border-width:3px}.preview__desc{max-width:400px;min-width:300px;display:flex;margin:10px;justify-content:space-between;flex-direction:column}.preview__picname{font-weight:700;font-size:20px}.preview__picdesc{word-break:break-all}.preview__link{text-decoration:none;width:auto;max-width:380px;padding:5px;margin:0 10px;border:3px solid #540000;border-radius:10px;box-shadow:#54000044 0px 0px 20px;transition:all .2s;text-align:center}.preview__link:hover{background:#54000077}</style>';
+    var strOldOne = prtContent;
+    var HTML = '<div id="print" class="contentpane">' + prtCSS + prtContent + '</div>';
+    var WinPrint = window.open('', '', 'left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
+    console.log(HTML);
+    WinPrint.document.write(HTML);
+    WinPrint.document.close();
+    console.log(WinPrint.document);
+    WinPrint.focus();
+    WinPrint.print();
+    WinPrint.close();
+}
 
 function closeActiveFloat() {
     closeFloat(activeFloat);

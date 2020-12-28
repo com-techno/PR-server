@@ -2,6 +2,7 @@ var someFloatIsActive = false;
 var activeFloat;
 var id;
 var painting;
+var loggedIn;
 /*var username = localStorage.getItem("token").split("@")[0];
 var nav_msg = new Vue({
     el: '#nav__message',
@@ -12,6 +13,7 @@ var nav_msg = new Vue({
 
 $(document).ready(
     function () {
+
         id = document.location.pathname.substring(1).split("/")[1];
         getPainting();
 
@@ -38,23 +40,37 @@ $(document).ready(
         $("#register__submit").click(function () {
             requestRegister();
         });
-
         $("#delete").click(function () {
             deletePainting();
         });
-
         $("#edit").click(function () {
             requestRegister();
         });
-
         $("#moderate").click(function () {
             requestRegister();
         });
-
+        $("#nav__print").click(function () {
+            console.log("jkdsks");
+           callPrint("painting");
+        });
 
     });
 
 
+function callPrint(strid) {
+    var prtContent = document.getElementById(strid).innerHTML;
+    var prtCSS = '<style>.paintings__feed{margin:10px;min-width:560px;height:auto;display:flex;justify-content:space-between;padding:10px;border-style:solid;border-radius:10px;border-width:3px}.preview__desc{max-width:400px;min-width:300px;display:flex;margin:10px;justify-content:space-between;flex-direction:column}.preview__picname{font-weight:700;font-size:20px}.preview__picdesc{word-break:break-all}.preview__link{text-decoration:none;width:auto;max-width:380px;padding:5px;margin:0 10px;border:3px solid #540000;border-radius:10px;box-shadow:#54000044 0px 0px 20px;transition:all .2s;text-align:center}.preview__link:hover{background:#54000077}.noprint{display:none;}</style>';
+    var strOldOne = prtContent;
+    var HTML = '<div id="print" class="contentpane">' + prtCSS + prtContent + '</div>';
+    var WinPrint = window.open('', '', 'left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
+    console.log(HTML);
+    WinPrint.document.write(HTML);
+    WinPrint.document.close();
+    console.log(WinPrint.document);
+    WinPrint.focus();
+    WinPrint.print();
+    WinPrint.close();
+}
 
 function closeActiveFloat() {
     closeFloat(activeFloat);
@@ -209,7 +225,7 @@ function deletePainting() {
     $("#login__pw").val("");
 
     function success(data, textStatus, jqXHR) {
-        location=location.host;
+        location = location.host;
     }
 
 }
