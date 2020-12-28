@@ -18,6 +18,8 @@ public interface MyDatabase {
 
     Painting getPainting(int id) throws Exception;
 
+    List<Painting> getPaintings() throws Exception;
+
     List<Painting> getModeratedPaintings() throws Exception;
 
     //List<Painting> getTop(int count) throws Exception;
@@ -30,5 +32,11 @@ public interface MyDatabase {
 
     void deletePainting(DeletePaintingForm deleteSong) throws Exception;
 
-    void getUserRole(Token token) throws Exception;
+    void addAuthor(NewAuthorForm newAuthor) throws Exception;
+
+    void editAuthor(EditAuthorForm editAuthor) throws Exception;
+
+    Author getAuthor(int id) throws Exception;
+
+    void deleteAuthor(DeleteAuthorForm deleteAuthor) throws Exception;
 }

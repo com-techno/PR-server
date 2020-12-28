@@ -41,6 +41,8 @@ public class APIHandler implements HttpHandler {
                 case "":
                     writeFile(exchange, new File(filepath + "html\\", "index.html"));
                     break;
+                case "painting":
+                    writeFile(exchange, new File(filepath + "html\\", "painting.html"));
                 case "login":
                     writeFile(exchange, new File(filepath + "html\\", "sign_in.html"));
                     break;
@@ -89,7 +91,6 @@ public class APIHandler implements HttpHandler {
                                 addPainting(exchange, gson, database, json);
                                 break;
                             case "get_painting":
-                                checkToken(headers);
                                 getPainting(exchange, gson, database);
                                 break;
                             case "moderate_painting":
@@ -101,6 +102,18 @@ public class APIHandler implements HttpHandler {
                                 checkToken(headers);
                                 checkRoot(headers);
                                 editPainting(exchange, gson, database, json);
+                                break;
+                            case "get_paintings":
+                                if (hasToken(headers)) {
+                                    checkToken(headers);
+                                    if (isRoot(headers))
+                                        getPaintings(exchange, gson, database);
+                                    else
+                                        getModeratedPaintings(exchange, gson, database);
+                                } else {
+                                    getModeratedPaintings(exchange, gson, database);
+                                }
+
                                 break;
                             case "get_moderated_paintings":
                                 getModeratedPaintings(exchange, gson, database);
@@ -165,10 +178,19 @@ public class APIHandler implements HttpHandler {
         if (!HashUtils.checkToken(token)) throw new Exception("Invalid token");
     }
 
-    private void checkRoot(Headers headers) throws Exception {
+    private boolean hasToken(Headers headers) throws Exception {
         String token = headers.getFirst("Token");
-        if (HashUtils.getRoleFromToken(token) == 0) throw new Exception("You haven't root role");;
+        return token != null;
+    }
 
+    private void checkRoot(Headers headers) throws Exception {
+        if (!isRoot(headers)) throw new Exception("You haven't root role");
+
+    }
+
+    private boolean isRoot(Headers headers) throws Exception {
+        String token = headers.getFirst("Token");
+        return HashUtils.getRoleFromToken(token) != 0;
     }
 
 }

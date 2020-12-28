@@ -7,20 +7,20 @@
     <meta name="author" content="Techno's studio">
     <meta name="description" content="Site about paintings - Index page">
     <link rel="stylesheet" href="../css/index.css">
-    <link rel="stylesheet" type="text/css" href="/static/css/index.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/painting.css">
     <link rel="icon" type="image/x-icon" href="/static/x-icon.png" />
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-    <script type="text/javascript" src="/static/js/index.js"></script>
+    <script type="text/javascript" src="/static/js/painting.js"></script>
 </head>
 
 <body>
     <header class="header">
         <a href="/" class="header__logo">Paintings</a>
         <div class="header__nav">
-            <span id="nav__message">Авторизован, как {{username}}</span>
+            <span id="nav__message">Авторизован, как {{ username }}</span>
             <!--<a href="" class="header__link">О&nbsp;нас</a>
             <a href="" class="header__link">Контакты</a>-->
             <button id="nav__login" class="header__link">Войти</button>
@@ -57,18 +57,18 @@
             </div>
         </form>
 
-        <div id="paintings__feed" class="paintings__feed" >
-            <div :id="'preview__' + painting.id" class="preview" v-for="painting in paintings">
+        <div id="painting" class="paintings__feed" >
                 <div class="preview__image">
-                    <img :src="painting.src" height="150">
+                    <img :src="painting.src" height="500">
                 </div>
                 <div class="preview__desc">
                     <div class="preview__picdescblock">
                         <div class="preview__picname">{{ painting.name }}</div>
                         <div class="preview__picdesc">{{ painting.description }}</div>
                     </div>
-                    <a :href="'painting/' + painting.id" class="preview__link">Подробнее</a>
-                </div>
+                    <button id="delete" class="header__link">Удалить</button>
+                    <button id="edit" class="header__link">Редактировать</button>
+                    <button id="moderate" class="header__link">Модерировать</button>
             </div>
 
         </div>

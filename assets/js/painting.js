@@ -1,12 +1,19 @@
 var someFloatIsActive = false;
 var activeFloat;
-var paintings;
-var feed;
+var id;
+var painting;
+/*var username = localStorage.getItem("token").split("@")[0];
+var nav_msg = new Vue({
+    el: '#nav__message',
+    data: {
+        username: username
+    }
+})*/
 
 $(document).ready(
     function () {
-
-        getPaintings();
+        id = document.location.pathname.substring(1).split("/")[1];
+        getPainting();
 
 
         var loginS = "login";
@@ -32,8 +39,17 @@ $(document).ready(
             requestRegister();
         });
 
+        $("#delete").click(function () {
+            deletePainting();
+        });
 
+        $("#edit").click(function () {
+            requestRegister();
+        });
 
+        $("#moderate").click(function () {
+            requestRegister();
+        });
 
 
     });
@@ -147,24 +163,87 @@ function requestRegister() {
 
 }
 
-function getPaintings() {
+function getPainting() {
 
     $.ajax({
-        url: "/api/get_paintings",
+        url: "/api/get_painting/",
         method: "GET",
         converters: jQuery.parseJSON,
         contentType: 'application/json',
+        data: {
+            id: id
+        },
         success: get
     });
 
     function get(data, textStatus, jqXHR) {
         data = JSON.parse(data);
-        paintings = data;
-        feed = new Vue({
-            el: '#paintings__feed',
+        painting = new Vue({
+            el: '#painting',
             data: {
-                paintings: paintings
+                painting: data
             }
         });
     }
+}
+
+function deletePainting() {
+
+    var data = JSON.stringify({
+        id: id
+    });
+
+    console.log(data);
+
+    $.ajax({
+        url: "/api/delete_painting",
+        method: "POST",
+        converters: jQuery.parseJSON,
+        contentType: 'application/json',
+        dataType: JSON,
+        data: data,
+        success: success
+    });
+
+    $("#login__un").val("");
+    $("#login__pw").val("");
+
+    function success(data, textStatus, jqXHR) {
+        location=location.host;
+    }
+
+}
+
+function requestLogin() {
+    var username = $("#login__un").val();
+    var password = $("#login__pw").val();
+
+    console.log(username);
+    console.log(password);
+
+    var data = JSON.stringify({
+        login: username,
+        passHash: password
+    });
+
+    console.log(data);
+
+    $.ajax({
+        url: "/api/sign_in",
+        method: "POST",
+        converters: JSON.parse,
+        contentType: 'application/json',
+        dataType: JSON,
+        data: data,
+        success: login
+    });
+
+    $("#login__un").val("");
+    $("#login__pw").val("");
+
+    function login(data, textStatus, jqXHR) {
+        console.log(data.token);
+        localStorage.setItem("token", data.token)
+    }
+
 }

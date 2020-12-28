@@ -6,6 +6,7 @@ import database.MyDatabase;
 import objects.Painting;
 import objects.forms.DeleteAuthorForm;
 import objects.forms.DeletePaintingForm;
+import objects.forms.NewAuthorForm;
 import objects.forms.NewPaintingForm;
 
 import java.util.Map;
@@ -16,7 +17,7 @@ public class AuthorUtils {
 
 
     public static void addAuthor(HttpExchange exchange, Gson gson, MyDatabase database, String json) throws Exception {
-        NewPaintingForm newAuthor = gson.fromJson(json, NewPaintingForm.class);
+        NewAuthorForm newAuthor = gson.fromJson(json, NewAuthorForm.class);
         database.addAuthor(newAuthor);
         writeJson(exchange, "message", "Added");
     }

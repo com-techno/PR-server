@@ -26,7 +26,9 @@ public class PaintingUtils {
         Map<String, String> params = DecodeUtils.paramsToMap(s);
         writeJson(exchange, gson.toJson(database.getPainting(Integer.parseInt(params.get("id")))));
     }
-
+    public static void getPaintings(HttpExchange exchange, Gson gson, MyDatabase database) throws Exception {
+        writeJson(exchange, gson.toJson(database.getPaintings()));
+    }
     public static void getModeratedPaintings(HttpExchange exchange, Gson gson, MyDatabase database) throws Exception {
         writeJson(exchange, gson.toJson(database.getModeratedPaintings()));
     }
